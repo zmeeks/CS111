@@ -1,0 +1,34 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+Included in this tarball:
+							lab3b.py
+							README
+							Makefile
+							
+The commands in the Makefile are:
+	make
+				this just tells you to run "make run" to run python script
+	
+	make run
+				will run "python lab3b.py"
+				NOTE: requires the six .csv files assumed to be present to be present
+			
+	make clean
+				removes the tarball and the lab3b_check.txt files
+				
+	make dist
+				makes the tarball with the files included above
+				
+NOTE:
+	the sample solution appears not to use the indirect blocks as evidenced from the fact that
+	when implemented with indirect blocks I get a different solution.  This contradicts the specs (or
+	I made a silly mistake).  From my understanding from nongnu the first twelve blocks are direct,
+	then blocks 13 - 268 are in the singly-indirect, 269 - 65804 in the doubly-indirect, and 65805 to
+	a really large number in the trebly-indirect. The number of blocks for inode 37201 is listed as 37;
+	however, only 24 are listed in the indirect.csv, hence only 36 are listed, while this error (if it
+	is one) is not listed on the official sample solution .txt file.  Thus I erased my partially completed
+	indirect solutions, and commented out the completed ones.
+						

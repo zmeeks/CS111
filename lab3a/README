@@ -1,0 +1,27 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+Included in this tarball:
+							lab3a.c
+							README
+							Makefile
+							
+The commands in the Makefile are:
+	make
+				makes the .c file
+	
+	make check
+				will run ./lab3a.c disk-image
+				NOTE: requires the file disk-image to be in the same folder
+			
+	make clean
+				removes the tarball, lab3a executable, and all of the .csv files produced during execution of the program
+				
+	make dist
+				makes the tarball with the files included above
+				
+	make easy
+				adds read privileges to all of the .csv files
+		

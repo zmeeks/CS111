@@ -1,0 +1,48 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+
+Included in this tarball:
+							lab4_uno.c
+							lab4_deux.c
+							lab4_tres.c
+							lab4_1.log
+							lab4_2.log
+							lab4_3.log
+							README
+							Makefile
+							
+The commands in the Makefile are:
+	make:
+			makes the three .c files
+			
+	make check:
+			runs all three executables. 
+			however, preferred method of execution is individually (please see below)
+			
+	make run_1
+			runs lab4_1 executable (exec corresponding to lab4_uno.c)
+			
+	make run_2
+			runs lab4_2 executable (exec corresponding to lab4_deux.c)
+			
+	make run_3
+			runs lab4_3 executable (exec corresponding to lab4_tres.c)
+			
+	make clean
+			removes the tarball, execuatables, and log files
+				
+	make dist
+			makes the tarball with the files included above
+			
+Note:
+		It is not necessary to run "make clean" between runs as the creation of the
+		log files includes the flag O_TRUNC
+		
+Note: 
+		lab4_3 would run for close to an hour and then encounter a broken pipe error so 
+		the log file for that one was terminated by me pressing ctrl+c.  I believe this
+		error was caused by the restarting of the server due to high demand or regular 
+		restart intervals
