@@ -1,0 +1,39 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+The included files in this tarball are: lab0.c, README, two .png screenshots, and a Makefile
+
+The lab0.c file contains an unused integer variable "catch_flag"
+The purpose for catch_flag was to make the --catch argument more robust.  I wanted to be
+able to call --catch without the program getting caught in an infinite loop.  However, I 
+could not figure out a way to resolve the issue as the catch_flag solution involved 
+incrementing the catch_flag inside the manual file-descriptor redirection switch, while
+the redirection operators are handled by the system and bypass the setting of the catch_flag.
+...
+tldr: --catch isn't robust and only works in conjunction with --segfault
+		
+additionally: the redirection operators also force the program to be less robust,
+	as I could not include a default action in the switch statement and I could not figure 
+	out how to implement the equivalent of a default action by other satisfactory means.
+
+Included with the make check are ten smoke tests: A B C D E F G H S Z
+	A-E test that lab0 exits successfully when given okay io file names
+	Z tests that the output file contents in A-E match their input file contents
+	F tests that exit status 1 is received when given a file that is not readable
+	note: via manual testing the same error is encountered when the file does not exist
+		and the way the conditional is set up, both cases should behave the same (as they do)
+	G tests that exit status 2 is received when given an output file that cannot be written to
+	H tests that exit status 3 is received when program catches the segfault
+	S tests that the file indeed encounters a segfault and is forced to exit when the only
+		argument given is --segfault
+		It tests this by way of looking for return code 139 since when UNIX is forced to 
+		exit by a signal, it returns exit code 128 + signal_number, which in the case
+		of a SIGSEGV is 11, hence 128+11=139 
+		
+
+note: the lab specs called for using fprintf and perror, but they returned the same thing
+and in discussion it was noted that they are indeed redundant.  I opted to only include
+perror.
+
