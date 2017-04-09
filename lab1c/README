@@ -1,0 +1,24 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+in running the benchmarks I found a couple bugs.  A particularly troubling one was that
+getopt_long would not let me run the command "sort -r."  A possible solution is to make 
+dummy cases for all of the letters of the alphabet so that getopt_long doesn't say that 
+single letter options preceded by a dash are incorrect.  I could get around this issue by 
+using sort followed by rev; however, the issue of robustness of -—command remains.
+
+another issue was trying to append a new file within the same simpsh call.  I wanted to 
+write a0.txt to file1.txt, sort it in reverse order to file2.txt, then append file1.txt in 
+sorted (forward order) to file2.txt, but this never resulted in the way that I wanted it to
+when called from the same simpsh command. A clue as to what might be happening is that the 
+second benchmark test often performs wc before shuf.  I'm guessing that the kernel knows that
+shuf won't change the wc, so it optimizes execution and shuf happens to execute after wc; however,
+when I try to run the commands to append, the kernel sees that it can optimize performance
+by switching things around so that I end up sorting an empty file among other things, which is 
+not at all what I wanted to do.  If there is a way to tell the kernel not to optimize the order
+of executions that might fix the issue.
+
+The simpsh benchmarks are included in the Makefile and can be made by invoking "make benchmark"
+the bash/dash benchmarks are included in the shell files bashdash1, bashdash2, bashdash3,
