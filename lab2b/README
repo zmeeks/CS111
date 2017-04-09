@@ -2,9 +2,6 @@
 ------------------------
 --Zack Meeks XXXXXX115--
 ------------------------
-
-NOTE: I forgot to include the graphs in my last tarball.  I am including the graphs produced
-	with the csv file from running make smoke_test.
 	
 Included in this tarball:
 							lab2_list.c
