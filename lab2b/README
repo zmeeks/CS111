@@ -1,0 +1,124 @@
+---------README---------
+------------------------
+--Zack Meeks XXXXXX115--
+------------------------
+
+NOTE: I forgot to include the graphs in my last tarball.  I am including the graphs produced
+	with the csv file from running make smoke_test.
+	
+Included in this tarball:
+							lab2_list.c
+							lab2b_list_mutex_wait.c		//used to produce lab2b_2.png					
+							SortedList.c
+							SortedList.h
+							Makefile
+							README
+							lab2b_1.gp					//used to produce lab2b_1.png	
+							lab2b_2.gp					//used to produce lab2b_2.png	
+							lab2b_3.gp					//used to produce lab2b_3.png	
+							lab2b_4.gp					//used to produce lab2b_4.png	
+							lab2b_5.gp					//used to produce lab2b_5.png	
+							lab2b_1.png
+							lab2b_2.png
+							lab2b_3.png
+							lab2b_4.png
+							lab2b_5.png
+							lab2a_add.csv				//used to produce lab2b_1.png	
+							lab2a_list.csv				//used to produce lab2b_1.png	
+							lab2b_list_mutex.csv			//used to produce lab2b_2.png	
+							lab2b_list_3.csv			//used to produce lab2b_3.png
+							lab2b_list_4.csv			//used to produce lab2b_4.png AND lab2b_5.png
+							lab_2b_list.csv				//data produced by running "make check" (runs all list tests from prev lab)
+							lab2b_2_tests.sh			//used to produce lab2b_2.png
+							lab2b_3_tests.sh			//used to produce lab2b_3.png
+							lab2b_4_tests.sh			//used to produce lab2b_4.png AND lab2b_5.png
+							test_script_2b.sh		    	//used to produce lab_2b_list.csv
+							profile.gperf				//profile report for spin-lock (1000 iterations, 12 threads)
+							
+Run:
+	"make" to compile all .c files
+	"make tests” to produce lab_2b_list.csv
+	"make graphs" to produce lab2b_*.png for *=1,2,3,4,5
+	"make profile" to produce profile.gperf and raw.gperf (latter not included in tarball bc not human readable)
+	"make tarball” to produce the tarball
+	"make clean" to erase the files produced by the Makefile
+							
+
+QUESTION 2.3.1 - Cycles in the basic implementation:
+Where do you believe most of the cycles are spent in the 1 and 2-thread tests (for both add and list)?  	
+Why do you believe these to be the most expensive parts of the code?
+	I would guess that the most cycles are being spent in the add function with respect to the add
+	program.  
+	For list, I would guess insert or lookup & delete would be the most expensive.  
+	For add, the add function is the only function that entails a double for loop (since it has 
+	one for loop and itself exists within a for loop). 
+	For list, both insert and lookup have to iterate through a linked-list and both insert and delete have
+	to modify the linked-list.  
+	
+Where do you believe most of the time/cycles are being spent in the high-thread spin-lock tests?
+	Without considering the execution profiling, I would guess that most of the time (cycles) is spent 
+	spinning, and that the time spinning would fall along the same lines that most time was spent in 
+	the basic implementation since the add function as well as insert and lookup & delete functions 
+	all entail critical sections with spin locks.
+	
+Where do you believe most of the time/cycles are being spent in the high-thread mutex tests?
+	I would guess that most of the cycles are spent executing add (in the case of add) or insert
+	and lookup & delete (in the case of list).  However, since we are considering high thread
+	tests, we may have enough contention that it may be the case that the system calls that 
+	handle and schedule the mutexes are more expensive than the time spent inside the critical
+	sections.
+
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the cycles when the spin-lock version of the 
+list exerciser is run with a large number of threads?
+	The wrapper_s function is the most expensive (no surprise). However, to my surprise, the
+	profile report reports that insert is possibly more than twice as expensive as lookup &
+	delete.  Presumably most of these cycles are spent spinning rather than executing code.
+Why does this operation become so expensive with large numbers of threads?
+	Note: I have no idea why insert is twice as expensive as lookup & delete.  My hunch is that
+	this difference is due to random error and that further trials would show the two to be more
+	similar; however all things considered, a factor of two difference could be due to assembly 
+	code implementations that I can't see.
+	As more threads are introduced, the levels of thread contentions rise as well, and since the
+	insert and lookup & delete critical sections are already the most expensive critical sections, 
+	the spinning compounds this and these areas become even more expensive. 
+
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs # threads) and the average wait-for-mutex time (vs #threads).  
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+	As the number of threads increases, the number of blocked threads increases, thus resulting in higher and higher
+	average wait times.  Additionally, as the number of threads increases, so do the contentions and system calls to
+	handle the mutexes.
+	
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+	It makes sense that the completion time rises as the number of threads increases, since here there is only
+	one linked list and there isn't much that can be done in parallel.  The reason for the average time not 
+	increasing as dramatically can be attributed to the fact that the wait time doesn't take into account the
+	time inside the locks which by their atomicity shouldn't increase with more threads, so that drowns out some
+	of the increase factor.  Additionally, as the threads increase, so do the number of operations which divide the
+	total time to give us average time per operation.
+
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+Should the throughput continue increasing as the number of lists is further increased?  If not, explain why not.
+	As the number of lists goes up, so should the ability to execute operations concurrently, and thus as the number of
+	lists goes up, so should the throughput.  However, these increases will converge, since the probability of two threads
+	trying to access the same resource decreases as the number of lists increases.  In fact there will be a point where more
+	lists become more expensive than less lists since more lists require initializing head nodes as well as iterating over more 
+	head nodes to get final length.
+	
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the throughput 
+of a single list with fewer (1/N) threads.  Does this appear to be true in the above curves?  If not, explain why not.
+	No this is not accurate.  We are incurring improvements on multiple fronts and they all have upper limits, diminishing returns, 
+	and early big gains.  The number of lists that we can do parallel processing on is capped by how many processor cores we have,
+	as well as by the convergence property stated above, which itself isn't monotonically increasing, and then there are the gains
+	received by simply having shorter lists to iterate over.  Looking at the graphs it appears that 1 thread and 1 list is arguably
+	similar to 4 threads and 4 lists; however, as can be seen in both plots, 2 threads with 4 lists is notably less than 4 threads 
+	with 8 lists.  
+	
+	
+

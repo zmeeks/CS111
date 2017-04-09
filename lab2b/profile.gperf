@@ -1,0 +1,156 @@
+Total: 37 samples
+      32  86.5%  86.5%       33  89.2% wrapper_s
+       4  10.8%  97.3%        4  10.8% __read_nocancel
+       1   2.7% 100.0%        1   2.7% SortedList_lookup
+       0   0.0% 100.0%       33  89.2% __clone
+       0   0.0% 100.0%        4  10.8% __libc_start_main
+       0   0.0% 100.0%        4  10.8% _start
+       0   0.0% 100.0%        4  10.8% element_array_key_init
+       0   0.0% 100.0%        4  10.8% main
+       0   0.0% 100.0%       33  89.2% start_thread
+ROUTINE ====================== wrapper_s in /u/eng/class/classzac/cs111/Lab2/lab2b_0/lab2b_list.c
+    32     33 Total samples (flat / cumulative)
+     .      .  246: 			exit(1);
+     .      .  247: 		}	
+     .      .  248: 	pthread_exit(NULL);
+     .      .  249: }
+     .      .  250: 
+---
+     .      .  251: void *wrapper_s(void *elem){
+     .      .  252: 	int i;
+     .      .  253: 	int length;
+     .      .  254: 	int del;
+     .      .  255: 	char *key_val;
+     .      .  256: 	SortedListElement_t *list_elem;	
+     .      .  257: 	//insert
+     .      .  258: 	SortedListElement_t *elem_ptr = &element_array[*((int*)elem)];
+     .      .  259: 	for(i=0; i< iterations-1; i++){		
+    23     23  260: 		while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  261:         	continue; 
+     .      .  262: 		SortedList_insert(&a_list, elem_ptr);	
+     .      .  263: 		elem_ptr += threads;	
+     .      .  264: 		__sync_lock_release(&spin_lock);
+     .      .  265: 	}
+     .      .  266: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  267:         	continue; 
+     .      .  268: 	SortedList_insert(&a_list, elem_ptr);
+     .      .  269: 	__sync_lock_release(&spin_lock);	
+     .      .  270: 	//length lookup
+     .      .  271: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  272:         	continue; 
+     .      .  273: 	length = SortedList_length(&a_list);
+     .      .  274: 	__sync_lock_release(&spin_lock);
+     .      .  275: 	if(length == -1){
+     .      .  276: 		fprintf(stderr, "ERROR in length: corrupted list!\n");
+     .      .  277: 		exit(1);
+     .      .  278: 	}	
+     .      .  279: 	//lookup and delete
+     .      .  280: 	for(i=0; i< iterations-1; i++){	
+     9      9  281: 		while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  282:         	continue; 
+     .      1  283: 		list_elem = SortedList_lookup(&a_list, elem_ptr->key);
+     .      .  284: 		if(list_elem == NULL){
+     .      .  285: 			fprintf(stderr, "ERROR in lookup: corrupted list!\n");
+     .      .  286: 			exit(1);
+     .      .  287: 		}
+     .      .  288: 		del = SortedList_delete(list_elem);
+     .      .  289: 		elem_ptr -= threads;
+     .      .  290: 		if(del == 1){
+     .      .  291: 			fprintf(stderr, "ERROR in delete: corrupted list!\n");
+     .      .  292: 			exit(1);
+     .      .  293: 		}
+     .      .  294: 		__sync_lock_release(&spin_lock);
+     .      .  295: 	}
+     .      .  296: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  297:         	continue; 
+     .      .  298: 	list_elem = SortedList_lookup(&a_list, elem_ptr->key);
+     .      .  299: 	if(list_elem == NULL){
+     .      .  300: 			fprintf(stderr, "ERROR in lookup: corrupted list!\n");
+     .      .  301: 			exit(1);
+     .      .  302: 		}
+     .      .  303: 	del = SortedList_delete(list_elem);
+     .      .  304: 	if(del == 1){
+     .      .  305: 			fprintf(stderr, "ERROR in delete: corrupted list!\n");
+     .      .  306: 			exit(1);
+     .      .  307: 		}	
+     .      .  308: 	__sync_lock_release(&spin_lock);
+     .      .  309: 	pthread_exit(NULL);	
+---
+     .      .  310: }
+     .      .  311: 	
+     .      .  312: long long int nano_time(struct timespec time_as_struc) {
+     .      .  313: 	long long int nano_seconds = (long long int)(time_as_struc.tv_sec * 1000000000) + (long long int)time_as_struc.tv_nsec;
+     .      .  314: 	return nano_seconds;
+ROUTINE ====================== wrapper_s in /u/eng/class/classzac/cs111/Lab2/lab2b_0/lab2b_list.c
+    32     33 Total samples (flat / cumulative)
+     .      .  246: 			exit(1);
+     .      .  247: 		}	
+     .      .  248: 	pthread_exit(NULL);
+     .      .  249: }
+     .      .  250: 
+---
+     .      .  251: void *wrapper_s(void *elem){
+     .      .  252: 	int i;
+     .      .  253: 	int length;
+     .      .  254: 	int del;
+     .      .  255: 	char *key_val;
+     .      .  256: 	SortedListElement_t *list_elem;	
+     .      .  257: 	//insert
+     .      .  258: 	SortedListElement_t *elem_ptr = &element_array[*((int*)elem)];
+     .      .  259: 	for(i=0; i< iterations-1; i++){		
+    23     23  260: 		while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  261:         	continue; 
+     .      .  262: 		SortedList_insert(&a_list, elem_ptr);	
+     .      .  263: 		elem_ptr += threads;	
+     .      .  264: 		__sync_lock_release(&spin_lock);
+     .      .  265: 	}
+     .      .  266: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  267:         	continue; 
+     .      .  268: 	SortedList_insert(&a_list, elem_ptr);
+     .      .  269: 	__sync_lock_release(&spin_lock);	
+     .      .  270: 	//length lookup
+     .      .  271: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  272:         	continue; 
+     .      .  273: 	length = SortedList_length(&a_list);
+     .      .  274: 	__sync_lock_release(&spin_lock);
+     .      .  275: 	if(length == -1){
+     .      .  276: 		fprintf(stderr, "ERROR in length: corrupted list!\n");
+     .      .  277: 		exit(1);
+     .      .  278: 	}	
+     .      .  279: 	//lookup and delete
+     .      .  280: 	for(i=0; i< iterations-1; i++){	
+     9      9  281: 		while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  282:         	continue; 
+     .      1  283: 		list_elem = SortedList_lookup(&a_list, elem_ptr->key);
+     .      .  284: 		if(list_elem == NULL){
+     .      .  285: 			fprintf(stderr, "ERROR in lookup: corrupted list!\n");
+     .      .  286: 			exit(1);
+     .      .  287: 		}
+     .      .  288: 		del = SortedList_delete(list_elem);
+     .      .  289: 		elem_ptr -= threads;
+     .      .  290: 		if(del == 1){
+     .      .  291: 			fprintf(stderr, "ERROR in delete: corrupted list!\n");
+     .      .  292: 			exit(1);
+     .      .  293: 		}
+     .      .  294: 		__sync_lock_release(&spin_lock);
+     .      .  295: 	}
+     .      .  296: 	while(__sync_lock_test_and_set(&spin_lock, 1))
+     .      .  297:         	continue; 
+     .      .  298: 	list_elem = SortedList_lookup(&a_list, elem_ptr->key);
+     .      .  299: 	if(list_elem == NULL){
+     .      .  300: 			fprintf(stderr, "ERROR in lookup: corrupted list!\n");
+     .      .  301: 			exit(1);
+     .      .  302: 		}
+     .      .  303: 	del = SortedList_delete(list_elem);
+     .      .  304: 	if(del == 1){
+     .      .  305: 			fprintf(stderr, "ERROR in delete: corrupted list!\n");
+     .      .  306: 			exit(1);
+     .      .  307: 		}	
+     .      .  308: 	__sync_lock_release(&spin_lock);
+     .      .  309: 	pthread_exit(NULL);	
+---
+     .      .  310: }
+     .      .  311: 	
+     .      .  312: long long int nano_time(struct timespec time_as_struc) {
+     .      .  313: 	long long int nano_seconds = (long long int)(time_as_struc.tv_sec * 1000000000) + (long long int)time_as_struc.tv_nsec;
+     .      .  314: 	return nano_seconds;
